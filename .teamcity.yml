@@ -1,0 +1,37 @@
+jobs:
+  Job1:
+    name: Job 1
+    steps:
+      - type: script
+        name: Welcome
+        script-content: echo 'Success' && ls -la
+  Job2:
+    name: Job 2
+    steps:
+      - type: script
+        docker-image: registry.appsec.global/appsechub/hub-cli:2026.3.2
+        script-content: |-
+          CODEBASE_URL="%vcsroot.url%"
+          BRANCH="%teamcity.build.branch%"
+          COMMIT="%build.vcs.number%"
+          CHECKOUT_PATH="%teamcity.build.checkoutDir%"
+          NAME="juice-shop"
+
+          CODEBASE="$CODEBASE_URL;$BRANCH;$COMMIT;$CHECKOUT_PATH;$NAME"
+
+          IP_ADDR="%HUB_IP%"
+          HOST_NAME="%HUB_ADDRESS%"
+
+          python3 -m src.scan_codebase --url "%APPSECHUB_URL%" \
+                  --token "%APPSECHUB_TOKEN%" \
+                  --appcode juice_shop_tc \
+                  --codebase "$CODEBASE" \
+                  --pipeline-code "CICD-template-sast" \
+                  --insecure
+        name: appsechub_scan
+        working-directory: /opt/scan
+        format-stderr-as-error: false
+    dependencies:
+      - Job1
+    integrations:
+      - Docker: PROJECT_EXT_4
