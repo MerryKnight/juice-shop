@@ -14,13 +14,10 @@ jobs:
           CODEBASE_URL="%vcsroot.url%"
           BRANCH="%teamcity.build.branch%"
           COMMIT="%build.vcs.number%"
-          CHECKOUT_PATH="%teamcity.build.checkoutDir%"
+          CHECKOUT_PATH="/"
           NAME="juice-shop"
 
           CODEBASE="$CODEBASE_URL;$BRANCH;$COMMIT;$CHECKOUT_PATH;$NAME"
-
-          IP_ADDR="%HUB_IP%"
-          HOST_NAME="%HUB_ADDRESS%"
 
           python3 -m src.scan_codebase --url "%APPSECHUB_URL%" \
                   --token "%APPSECHUB_TOKEN%" \
